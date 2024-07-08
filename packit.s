@@ -11,8 +11,9 @@ packitString = "\fg(#ffffff)\bpackit:\c "
 # packit version
 ? argv[0] = "v"
   println(packitString+"Version 0.1.0")
+  exit(0)
 #
-# sync package (update/download)
+# Synchronize package (update/download)
 ? argv[0] = "s"
   target
   ? argc < 2
@@ -26,13 +27,14 @@ packitString = "\fg(#ffffff)\bpackit:\c "
     exec("sudo pacman --noconfirm -S "+target)
   ?
     println(packitString+"Requires 2nd parameter as target")
-# sync all
+    exit(1)
+# Synchronize all packages
 ? argv[0] = "sa"
   println(packitString+"Synchronize all packages")
   exec("sudo pacman --noconfirm -S archlinux-keyring")
   exec("sudo pacman --noconfirm -Syu")
 #
-# remove package
+# Remove package
 ? argv[0] = "r"
   target
   ? argc < 2
@@ -42,10 +44,11 @@ packitString = "\fg(#ffffff)\bpackit:\c "
   println(packitString+"Remove package '"+target+"'")
   
   ? argc = 2
-    exec("sudo pacman --noconfirm -R"+target)
+    exec("sudo pacman --noconfirm -Rdd"+target)
   ?
     println(packitString+"Requires 2nd parameter as target")
-# remove package with dependencies
+    exit(1)
+# Remove package with dependencies
 ? argv[0] = "rd"
   target
   ? argc < 2
@@ -55,10 +58,11 @@ packitString = "\fg(#ffffff)\bpackit:\c "
   println(packitString+"Remove package '"+target+"' with dependencies")
   
   ? argc = 2
-    exec("sudo pacman --noconfirm -Rn "+target)
+    exec("sudo pacman --noconfirm -Rddn "+target)
   ?
-    println("Requires 2nd parameter as target")
-# remove package with dependencies, configuration
+    println(packitString+"Requires 2nd parameter as target")
+    exit(1)
+# Remove package with dependencies, configuration
 ? argv[0] = "rdc"
   target
   ? argc < 2
@@ -68,32 +72,57 @@ packitString = "\fg(#ffffff)\bpackit:\c "
   println(packitString+"Remove package '"+target+"' with dependencies, configuration")
   
   ? argc = 2
-    exec("sudo pacman --noconfirm -Rns "+target)
+    exec("sudo pacman --noconfirm -Rddns "+target)
   ?
-    println("Requires 2nd parameter as target")
+    println(packitString+"Requires 2nd parameter as target")
+    exit(1)
 #
-# litter packages
+# Litter packages
 ? argv[0] = "l"
   println(packitString+"Show litter packages")
   exec("pacman -Qdtq")
-# clear litter packages
+# Clear litter packages
 ? argv[0] = "lc"
   println(packitString+"Clear litter packages")
   exec("sudo pacman --noconfirm -Rdd $(pacman -Qdtq)")
-  # todo: check litter list
+  # todo: Check litter list
 #
-# clear cache, leaving latest
+# Clear cache, leaving latest
 ? argv[0] = "c"
   println(packitString+"Clear cache, leaving latest")
   exec("sudo pacman --noconfirm -Sc")
-# clear cache all
+# Clear cache all
 ? argv[0] = "ca"
   println(packitString+"Clear cache, all")
   exec("sudo pacman --noconfirm -Scc")
 #
-# bad command
+? argv[0] = "h"
+  println(packitString+"All commands:")
+  
+  println("  v     packit version")
+  println("")
+  
+  println("  s     Synchronize package (update/download)")
+  println("  sa    Synchronize all packages")
+  println("")
+  
+  println("  r     Remove package")
+  println("  rd    Remove package with dependencies")
+  println("  rdc   Remove package with dependencies, configuration")
+  println("")
+  
+  println("  l     Litter packages")
+  println("  lc    Clear litter packages")
+  println("")
+  
+  println("  c     Clear cache, leaving latest")
+  println("  ca    Clear cache all")
+  
+  exit(0)
+# Bad command
 ?
-  println(packitString+"bad command, no work")
+  println(packitString+"Bad command, no work")
+  println("        Use h (help) key")
   exit(1)
 
 println(packitString+"Successful completion")
